@@ -1,6 +1,10 @@
 from flask import Flask
 from pymongo import MongoClient
 from flask import jsonify
+import json
+from bson.json_util import dumps as mongo_dumps
+from pymongo.cursor import Cursor
+
 
 app = Flask(__name__)
 
@@ -16,6 +20,7 @@ def home():
 @app.route("/songs")
 def songs():
 	all_songs = songs_music.find()
+	all_songs = json.loads(mongo_dumps(all_songs))
 	return jsonify(all_songs)
 	
 	
