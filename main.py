@@ -58,11 +58,11 @@ def search_song():
 	
 	search_query = re.compile(song, re.IGNORECASE)
 	where = {
-        '$or': [
-            {'title': search_query},
-            {'artist': search_query},
-        ]
-    }
+		'$or': [
+			{'title': search_query},
+			{'artist': search_query},
+		]
+	}
 
 	result = db.songs.find(where)
 	result = [r for r in result]
@@ -70,6 +70,36 @@ def search_song():
 
 	return jsonify({"songs are": result})
 
+@app.route("/songs/rating/", methods = ['POST'])
+def add_rating():
+	data = request.json
+	print("request is", data.get('song_id'), data.get('rating'), request.json)
+
+	try:
+		if not data.get('song_id'):
+			return jsonify({'error':'song id must be specified'})
+	except:
+		pass
+
+	song_id = data.get('song_id')
+	if not db.songs.find({'_id': [song_id]}):
+		return jsonify({'error':'Song not found'})
+
+	try:
+		rating = int(data.get('rating'))  # Raises value error
+		if 1 > rating or rating > 5:
+			raise ValueError()
+	except ValueError:
+		return jsonify({'error':'Invalid valid for "rating" param.'})
+	except TypeError:
+		return jsonify({'error':'Required "rating" not sent'})
+
+	db.ratings.insert({
+		'value': rating,
+		'song_id': song_id,
+	})
+
+	return jsonify({'success':'rating added'})
 
 if __name__ == "__main__":
 	app.run(debug=True)
