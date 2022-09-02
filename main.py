@@ -7,6 +7,8 @@ from pymongo.cursor import Cursor
 from flask_pymongo import PyMongo
 from functools import reduce
 import re
+from bson import ObjectId
+
 
 app = Flask(__name__)
 
@@ -81,8 +83,8 @@ def add_rating():
 	except:
 		pass
 
-	song_id = data.get('song_id')
-	if not db.songs.find({'_id': [song_id]}):
+	song_id = ObjectId(data.get('song_id'))
+	if not db.songs.find({'_id': {'$exists': True, '$in': [song_id]}}):
 		return jsonify({'error':'Song not found'})
 
 	try:
@@ -94,12 +96,13 @@ def add_rating():
 	except TypeError:
 		return jsonify({'error':'Required "rating" not sent'})
 
-	db.ratings.insert({
+	db.ratings.insert_one({
 		'value': rating,
 		'song_id': song_id,
 	})
 
 	return jsonify({'success':'rating added'})
+
 
 if __name__ == "__main__":
 	app.run(debug=True)
