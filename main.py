@@ -6,7 +6,7 @@ from bson import json_util
 from pymongo.cursor import Cursor
 from flask_pymongo import PyMongo
 from functools import reduce
-
+import re
 
 app = Flask(__name__)
 
@@ -45,12 +45,32 @@ def get_avg_difficulty():
 	total_value = reduce(lambda total, value: total + (value), _songs, 0)
 	result =  round(total_value / total_items, 2)
 
-	print("avg diff songs", _songs, result)
 	return jsonify({"average difficulty": result})
 	
+@app.route("/songs/search/", methods=['GET'])
+def search_song():
 
-		
+	song = request.args.get('message')
+	print("message is", song)
+
+	if not song:
+		return jsonify({"error": "no song title/artist given. Kindly enter title/artist for searching song"})
 	
+	search_query = re.compile(song, re.IGNORECASE)
+	where = {
+        '$or': [
+            {'title': search_query},
+            {'artist': search_query},
+        ]
+    }
+
+	result = db.songs.find(where)
+	result = [r for r in result]
+	print("query result are", result)
+
+	return jsonify({"songs are": result})
+
+
 if __name__ == "__main__":
 	app.run(debug=True)
 
