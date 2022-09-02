@@ -2,26 +2,31 @@ from flask import Flask
 from pymongo import MongoClient
 from flask import jsonify
 import json
-from bson.json_util import dumps as mongo_dumps
+from bson import json_util
 from pymongo.cursor import Cursor
+from flask_pymongo import PyMongo
 
 
 app = Flask(__name__)
 
-client = MongoClient('localhost', 27017)
+mongodb_client = PyMongo(app, uri="mongodb://localhost:27017/Songs")
 
-db = client.songs
-songs_music = db.songs
+db = mongodb_client.db
+songs_music = db.Songs
 
 @app.route("/")
 def home():
     return "Hello, World!"
 	
-@app.route("/songs")
+@app.route("/songs", methods=['GET'])
 def songs():
-	all_songs = songs_music.find()
-	all_songs = json.loads(mongo_dumps(all_songs))
-	return jsonify(all_songs)
+	all_songs = db.Songs.find()
+	print(all_songs, flush=True)
+
+	#result = [song for song in all_songs]
+	print(json.dumps(all_songs), flush=True)
+	#print(songs_music.find_one(), flush = True)
+	return jsonify(message="success")
 	
 	
 	
