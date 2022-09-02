@@ -104,6 +104,30 @@ def add_rating():
 	return jsonify({'success':'rating added'})
 
 
+@app.route("/songs/avg/rating/<string:song_id>", methods=['GET'])
+def get_avg_rating(song_id):
+	ratings_count = 0
+	rating_sum = 0
+	rating_max = 0
+	rating_min = 0
+
+
+	song = db.ratings.find({'song_id':ObjectId(song_id)})
+	print("song is", song)
+	for rating in song:
+		# O(1)
+		if rating['value']:
+			print('ratings is', rating['value'])
+			ratings_count += 1
+			rating_sum += rating['value']
+			rating_max = rating_max if rating_max > rating['value'] else rating['value']
+			rating_min = rating_min if rating_min < rating['value'] else rating['value']
+
+	average = round(rating_sum / ratings_count, 2) if ratings_count else 0
+
+	return jsonify({'min': rating_min, 'max': rating_max, 'average': average})
+
+
 if __name__ == "__main__":
 	app.run(debug=True)
 
