@@ -55,7 +55,6 @@ def get_avg_difficulty():
 def search_song():
 	""" searches the song by artist or song name."""
 	song = request.args.get('message')
-	print("message is", song)
 
 	if not song:
 		return jsonify({"error": "no song title/artist given. Kindly enter title/artist for searching song"})
@@ -70,7 +69,6 @@ def search_song():
 
 	result = db.songs.find(where)
 	result = [r for r in result]
-	print("query result are", result)
 
 	return jsonify({"songs are": result})
 
@@ -78,7 +76,6 @@ def search_song():
 def add_rating():
 	"""  Adds a  rating for the given song id. """
 	data = request.json
-	print("request is", data.get('song_id'), data.get('rating'), request.json)
 
 	try:
 		if not data.get('song_id'):
@@ -95,7 +92,7 @@ def add_rating():
 		if 1 > rating or rating > 5:
 			raise ValueError()
 	except ValueError:
-		return jsonify({'error':'Invalid valid for "rating" param.'})
+		return jsonify({'error':'Invalid value for "rating" parameter.'})
 	except TypeError:
 		return jsonify({'error':'Required "rating" not sent'})
 
@@ -119,7 +116,6 @@ def get_avg_rating(song_id):
 	song = db.ratings.find({'song_id':ObjectId(song_id)})
 	print("song is", song)
 	for rating in song:
-		# O(1)
 		if rating['value']:
 			print('ratings is', rating['value'])
 			ratings_count += 1
@@ -131,8 +127,8 @@ def get_avg_rating(song_id):
 
 	return jsonify({'min': rating_min, 'max': rating_max, 'average': average})
 
-
+'''
 if __name__ == "__main__":
 	app.run(debug=True)
-
+'''
 
