@@ -9,6 +9,14 @@ from functools import reduce
 import re
 from bson import ObjectId
 
+'''
+NOTE :- This is my first flask app. for improvements i would have done following :-
+1. adding http status codes for success and failure
+2. adding more tests
+3. separating modules, removing repeatative code like db connections and creating separate class for it.
+4. adding .env file for setting up the mongodb url rather than hardcoding here.
+
+'''
 
 app = Flask(__name__)
 

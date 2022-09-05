@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+
+  db:
+    container_name: songs
+    image: mongo:3.2.19
+    environment:
+      - MONGODB_DBNAME=songs
+
+  backend:
+    container_name: songs
+    build: ./Backend_Flask_app/
+    command: flask run --host=0.0.0.0
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=production
+    ports:
+      - "5000:5000"
+    links:
+      - db
+
+ 
