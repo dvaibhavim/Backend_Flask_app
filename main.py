@@ -23,6 +23,7 @@ def home():
 	
 @app.route("/songs/", methods=['GET'])
 def songs():
+	"""displays all songs collection available in Yousician. """
 	all_songs = db.songs.find()
 	result = {}
 	cnt = 0
@@ -33,6 +34,7 @@ def songs():
 	
 @app.route("/songs/avg/difficulty/", methods=['GET'])	
 def get_avg_difficulty():
+	""" returns average difficulty for all songs."""
 	all_songs = db.songs.find()
 	columns = {'_id': 0, 'difficulty': 1}
 
@@ -51,7 +53,7 @@ def get_avg_difficulty():
 	
 @app.route("/songs/search/", methods=['GET'])
 def search_song():
-
+	""" searches the song by artist or song name."""
 	song = request.args.get('message')
 	print("message is", song)
 
@@ -74,6 +76,7 @@ def search_song():
 
 @app.route("/songs/rating/", methods = ['POST'])
 def add_rating():
+	"""  Adds a  rating for the given song id. """
 	data = request.json
 	print("request is", data.get('song_id'), data.get('rating'), request.json)
 
@@ -106,6 +109,7 @@ def add_rating():
 
 @app.route("/songs/avg/rating/<string:song_id>", methods=['GET'])
 def get_avg_rating(song_id):
+	""" Returns the average, the lowest and the highest rating of the given song id. """
 	ratings_count = 0
 	rating_sum = 0
 	rating_max = 0
